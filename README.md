@@ -1,7 +1,7 @@
 # Apache PySpark by Example
 This is the repository for the LinkedIn Learning course Apache PySpark by Example. The full course is available from [LinkedIn Learning][lil-course-url].
 
-## Creating a spark session
+## Creating a spark session (locally)
 Initiate the process of building a SparkSession using the `builder` method.
 
 Set the spark master using the `master` method. 
@@ -15,6 +15,38 @@ Create the session
 ```
 spark = SparkSession.builder.master("local[*]").getOrCreate()
 ```
+
+## Read dataframe 
+To read a csv file, use the `read.csv` method. 
+
+Create a `Date` column from by converting the existing `Date` column into timestamp using the `to_timestamp` method. 
+- `.withColumn('Date', ...)` means to either modify an existing column named 'Date' or create a new one with that name.
+- `to_timestamp(col('Date'),'MM/dd/yyyy hh:mm:ss a')` converts the data within the existing 'Date' column into a timestamp data type with the formatting pattern 'MM/dd/yyyy hh:mm:ss a'.
+- `col('Date')` selects the existing 'Date' column.
+
+Filter to dates before a certain date using the `filter` method. 
+- `lit('2018-11-11')` creates a literal timestamp representing November 11th, 2018.
+
+
+```
+from pyspark.sql.functions import to_timestamp, col, lit
+rc = spark.read.csv('reported-crimes.csv', header=True
+                    ).withColumn('Date', to_timestamp(col('Date'),'MM/dd/yyyy hh:mm:ss a')
+                                 ).filter(col('Date') <= lit('2018-11-11'))
+```
+
+## Quick stats
+
+The `show` method displays rows. 
+```
+rc.show(5)  # display the top 5 rows. 
+```
+
+The `count` method counts the number of rows (aka entries). 
+```
+rc.count()
+```
+
 
 ### Instructor
 
